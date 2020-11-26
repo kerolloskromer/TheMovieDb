@@ -6,6 +6,9 @@ import retrofit2.http.Query
 interface MoviesApiInterface {
 
     @GET("/3/movie/popular")
-    suspend fun getPopularMovies(@Query("page") page: Int): MoviesResponse
+    suspend fun getPopularMovies(
+        @Query("page") page: Int,
+        @Query("include_adult") includeAdult: Boolean
+    ): MoviesResponse
 
 }

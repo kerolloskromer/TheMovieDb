@@ -20,6 +20,14 @@ interface MoviesDao {
     suspend fun get(): List<Movie>
 
     /**
+     * Select all movies from the movies table that matches this date.
+     *
+     * @return all movies.
+     */
+    @Query("SELECT * FROM movies WHERE releaseDate = :date")
+    suspend fun getByDate(date: String): List<Movie>
+
+    /**
      * Select a movie by id.
      *
      * @param id the movie id.

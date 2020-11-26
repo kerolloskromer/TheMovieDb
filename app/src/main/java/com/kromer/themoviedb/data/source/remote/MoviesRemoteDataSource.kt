@@ -8,8 +8,12 @@ class MoviesRemoteDataSource @Inject constructor(
     private val apiInterface: MoviesApiInterface
 ) :
     MoviesDataSource {
-    override suspend fun getPopularMovies(page: Int): List<Movie> =
-        apiInterface.getPopularMovies(page).results
+    override suspend fun getPopularMovies(page: Int, includeAdult: Boolean): List<Movie> =
+        apiInterface.getPopularMovies(page, includeAdult).results
+
+    override suspend fun getByDate(date: String): List<Movie> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun add(movies: List<Movie>) {
         TODO("Not yet implemented")

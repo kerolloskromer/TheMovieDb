@@ -1,7 +1,7 @@
 package com.kromer.themoviedb.domain.interactor
 
-import com.kromer.themoviedb.domain.repository.MoviesRepository
 import com.kromer.themoviedb.domain.model.Movie
+import com.kromer.themoviedb.domain.repository.MoviesRepository
 import javax.inject.Inject
 
 class GetPopularMoviesInteractor @Inject constructor(
@@ -9,8 +9,9 @@ class GetPopularMoviesInteractor @Inject constructor(
 ) {
     suspend fun getPopularMovies(
         page: Int,
-        forceUpdate: Boolean
+        forceUpdate: Boolean,
+        includeAdult: Boolean
     ): List<Movie> {
-        return repository.getPopularMovies(page, forceUpdate)
+        return repository.getPopularMovies(page, forceUpdate, includeAdult)
     }
 }

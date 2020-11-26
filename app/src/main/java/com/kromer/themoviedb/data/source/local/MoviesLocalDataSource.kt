@@ -8,7 +8,10 @@ class MoviesLocalDataSource @Inject constructor(
     private val moviesDao: MoviesDao
 ) :
     MoviesDataSource {
-    override suspend fun getPopularMovies(page: Int): List<Movie> = moviesDao.get()
+    override suspend fun getPopularMovies(page: Int, includeAdult: Boolean): List<Movie> =
+        moviesDao.get()
+
+    override suspend fun getByDate(date: String): List<Movie> = moviesDao.getByDate(date)
 
     override suspend fun add(movies: List<Movie>) = moviesDao.insert(movies)
 

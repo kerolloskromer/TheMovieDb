@@ -1,8 +1,9 @@
 package com.kromer.themoviedb.presentation.ui.main.list
 
+import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
+import android.widget.DatePicker
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,10 @@ import com.kromer.themoviedb.presentation.base.BaseFragment
 import com.kromer.themoviedb.utils.Status
 import com.kromer.themoviedb.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 @AndroidEntryPoint
 class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
@@ -25,14 +30,73 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
     private lateinit var adapter: MoviesAdapter
     private var currentPage = 1
 
+    private var datePickerDialog: DatePickerDialog? = null
+    private var adultMenuFilter: MenuItem? = null
+
     override fun getVBInflater(): (LayoutInflater) -> FragmentMoviesBinding =
         FragmentMoviesBinding::inflate
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
         reset()
+        getData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_filter, menu)
+        adultMenuFilter = menu.findItem(R.id.action_filter_type)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        return when (item.itemId) {
+            R.id.action_filter_type -> {
+                reset()
+                item.isChecked = !item.isChecked
+                getData()
+                true
+            }
+            R.id.action_filter_date -> {
+                setupDatePickerDialog()
+                true
+            }
+            R.id.action_filter_clear -> {
+                reset()
+                getData()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { view: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                calendar[year, month] = dayOfMonth
+                val date = calendar.time
+                val format = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                val selected = format.format(date)
+                getDataByDate(selected)
+            },
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
+        )
+        datePickerDialog?.datePicker?.maxDate = calendar.timeInMillis
+        datePickerDialog?.show()
     }
 
     private fun setupObservers() {
@@ -116,10 +180,20 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
         binding.progressBar.show()
         binding.textView.hide()
         currentPage = 1
-        getData()
+        items.clear()
+        adultMenuFilter?.isChecked = false
     }
 
     private fun getData() {
-        viewModel.getPopularMovies(currentPage, Utils.isNetworkAvailable(requireContext()))
+        viewModel.getPopularMovies(
+            currentPage,
+            Utils.isNetworkAvailable(requireContext()),
+            adultMenuFilter?.isChecked ?: false
+        )
+    }
+
+    private fun getDataByDate(date: String) {
+        reset()
+        viewModel.getByDate(date)
     }
 }

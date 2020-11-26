@@ -2,4 +2,7 @@
     <string name="app_name">TheMovieDB</string>
     <string name="details">Details</string>
     <string name="no_data">No Items Found</string>
+    <string name="filter_type">Show Adult</string>
+    <string name="filter_date">Filter By Date</string>
+    <string name="filter_clear">Clear Filter</string>
 </resources>
