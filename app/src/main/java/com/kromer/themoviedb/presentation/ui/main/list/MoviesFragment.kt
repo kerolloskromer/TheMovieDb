@@ -14,6 +14,7 @@ import com.kromer.themoviedb.extensions.hide
 import com.kromer.themoviedb.extensions.show
 import com.kromer.themoviedb.presentation.base.BaseFragment
 import com.kromer.themoviedb.utils.Status
+import com.kromer.themoviedb.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -119,6 +120,6 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
     }
 
     private fun getData() {
-        viewModel.getPopularMovies(currentPage, true)
+        viewModel.getPopularMovies(currentPage, Utils.isNetworkAvailable(requireContext()))
     }
 }

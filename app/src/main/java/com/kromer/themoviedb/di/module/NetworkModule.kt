@@ -1,5 +1,6 @@
 package com.kromer.themoviedb.di.module
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kromer.themoviedb.BuildConfig
@@ -8,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,11 +26,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHeadersInterceptor(): Interceptor =
+    fun provideHeadersInterceptor(@ApplicationContext context: Context): Interceptor =
         Interceptor { chain: Interceptor.Chain ->
             val request = chain.request()
-            val newUrl =
-                request.url.newBuilder().addQueryParameter("api_key", BuildConfig.API_KEY).build()
+            val httpBuilder = request.url.newBuilder()
+            httpBuilder.addQueryParameter("api_key", BuildConfig.API_KEY)
+            httpBuilder.addQueryParameter(
+                "language",
+                context.resources.configuration.locale.language
+            )
+            val newUrl = httpBuilder.build()
             val newRequest = request.newBuilder().url(newUrl).build()
             chain.proceed(newRequest)
         }
