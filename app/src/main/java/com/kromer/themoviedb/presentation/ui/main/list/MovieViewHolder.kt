@@ -1,4 +1,4 @@
-package com.kromer.themoviedb.presentation.ui.main
+package com.kromer.themoviedb.presentation.ui.main.list
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

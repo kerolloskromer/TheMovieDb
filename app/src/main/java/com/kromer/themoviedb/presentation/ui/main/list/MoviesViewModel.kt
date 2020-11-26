@@ -1,4 +1,4 @@
-package com.kromer.themoviedb.presentation.ui.main
+package com.kromer.themoviedb.presentation.ui.main.list
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -10,7 +10,7 @@ import com.kromer.themoviedb.presentation.base.BaseViewModel
 import com.kromer.themoviedb.utils.Resource
 import kotlinx.coroutines.launch
 
-class MainViewModel @ViewModelInject constructor(
+class MoviesViewModel @ViewModelInject constructor(
     private val getPopularMoviesInteractor: GetPopularMoviesInteractor
 ) : BaseViewModel() {
 

@@ -8,4 +8,5 @@ import com.kromer.themoviedb.domain.model.Movie
 interface MoviesDataSource {
     suspend fun getPopularMovies(page: Int): List<Movie>
     suspend fun add(movies: List<Movie>)
+    suspend fun get(id: String): Movie?
 }

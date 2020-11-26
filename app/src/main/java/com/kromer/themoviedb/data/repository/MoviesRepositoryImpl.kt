@@ -21,4 +21,6 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun add(movies: List<Movie>) = moviesLocalDataSource.add(movies)
+
+    override suspend fun get(id: String): Movie? = moviesLocalDataSource.get(id)
 }
