@@ -1,6 +1,11 @@
-package com.kromer.themoviedb.domain.model
+package com.kromer.themoviedb.data.local
 
-data class Movie(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "movies")
+data class MovieLocal(
+    @PrimaryKey
     val id: String,
     val popularity: Double,
     val voteAverage: Double,
