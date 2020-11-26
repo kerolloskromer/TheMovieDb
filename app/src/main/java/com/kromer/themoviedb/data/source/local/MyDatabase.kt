@@ -1,9 +1,10 @@
-package com.kromer.themoviedb.data.local
+package com.kromer.themoviedb.data.source.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.kromer.themoviedb.domain.model.Movie
 
-@Database(entities = [MovieLocal::class], version = MyDatabase.DATABASE_VERSION)
+@Database(entities = [Movie::class], version = MyDatabase.DATABASE_VERSION)
 abstract class MyDatabase : RoomDatabase() {
 
     companion object {

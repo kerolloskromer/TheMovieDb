@@ -1,8 +1,12 @@
-package com.kromer.themoviedb.data.remote
+package com.kromer.themoviedb.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class MovieRemote(
+@Entity(tableName = "movies")
+data class Movie(
+    @PrimaryKey
     @SerializedName("id")
     val id: String,
     @SerializedName("popularity")

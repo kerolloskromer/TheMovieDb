@@ -2,7 +2,7 @@ package com.kromer.themoviedb.di.module
 
 import android.content.Context
 import androidx.room.Room
-import com.kromer.themoviedb.data.local.MyDatabase
+import com.kromer.themoviedb.data.source.local.MyDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

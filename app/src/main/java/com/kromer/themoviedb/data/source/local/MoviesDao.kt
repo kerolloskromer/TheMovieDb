@@ -1,9 +1,10 @@
-package com.kromer.themoviedb.data.local
+package com.kromer.themoviedb.data.source.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.kromer.themoviedb.domain.model.Movie
 
 /**
  * Data Access Object for the movies table.
@@ -16,7 +17,7 @@ interface MoviesDao {
      * @return all movies.
      */
     @Query("SELECT * FROM movies")
-    suspend fun get(): List<MovieLocal>
+    suspend fun get(): List<Movie>
 
     /**
      * Select a movie by id.
@@ -25,7 +26,7 @@ interface MoviesDao {
      * @return the movie with id.
      */
     @Query("SELECT * FROM movies WHERE id = :id")
-    suspend fun get(id: String): MovieLocal?
+    suspend fun get(id: String): Movie?
 
     /**
      * Insert movies in the database. If the movie already exists, replace it.
@@ -33,5 +34,5 @@ interface MoviesDao {
      * @param movies the movie to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(movies: List<MovieLocal>)
+    suspend fun insert(movies: List<Movie>)
 }

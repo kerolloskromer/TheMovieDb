@@ -3,12 +3,11 @@ package com.kromer.themoviedb.di.module
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kromer.themoviedb.BuildConfig
-import com.kromer.themoviedb.data.remote.MoviesApiInterface
+import com.kromer.themoviedb.data.source.remote.MoviesApiInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -47,14 +46,12 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         headersInterceptor: Interceptor,
-        logging: HttpLoggingInterceptor,
-        authenticator: Authenticator
+        logging: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
         .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
         .addNetworkInterceptor(headersInterceptor)
         .addNetworkInterceptor(logging)
-        .authenticator(authenticator)
         .retryOnConnectionFailure(false)
         .build()
 

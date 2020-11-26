@@ -1,4 +1,4 @@
-package com.kromer.themoviedb.data
+package com.kromer.themoviedb.domain.repository
 
 import com.kromer.themoviedb.domain.model.Movie
 
