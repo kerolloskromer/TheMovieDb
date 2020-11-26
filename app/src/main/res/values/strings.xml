@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TheMovieDB</string>
+    <string name="no_data">No Items Found</string>
 </resources>
