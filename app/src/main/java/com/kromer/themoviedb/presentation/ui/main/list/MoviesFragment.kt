@@ -7,13 +7,13 @@ import android.widget.DatePicker
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.kromer.themoviedb.R
 import com.kromer.themoviedb.databinding.FragmentMoviesBinding
 import com.kromer.themoviedb.domain.model.Movie
 import com.kromer.themoviedb.extensions.hide
 import com.kromer.themoviedb.extensions.show
 import com.kromer.themoviedb.presentation.base.BaseFragment
+import com.kromer.themoviedb.utils.EndlessRecyclerViewScrollListener
 import com.kromer.themoviedb.utils.Status
 import com.kromer.themoviedb.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,7 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
     private val viewModel: MoviesViewModel by viewModels()
     private val items: ArrayList<Movie> = ArrayList()
     private lateinit var adapter: MoviesAdapter
-    private var currentPage = 1
+    private var isDataLoading = false
 
     private var datePickerDialog: DatePickerDialog? = null
     private var adultMenuFilter: MenuItem? = null
@@ -46,7 +46,7 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
         setupRecyclerView()
         setupObservers()
         reset()
-        getData()
+        getData(1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -64,7 +64,7 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
             R.id.action_filter_type -> {
                 reset()
                 item.isChecked = !item.isChecked
-                getData()
+                getData(1)
                 true
             }
             R.id.action_filter_date -> {
@@ -73,7 +73,7 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
             }
             R.id.action_filter_clear -> {
                 reset()
-                getData()
+                getData(1)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -124,17 +124,16 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
         )
         binding.recyclerView.adapter = adapter
 
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0) {
-                    val layoutManager = binding.recyclerView.layoutManager as LinearLayoutManager
-                    val visibleItemCount = layoutManager.findLastCompletelyVisibleItemPosition() + 1
-                    if (visibleItemCount == layoutManager.itemCount) {
-                        getData()
-                    }
-                }
+        binding.recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(
+            binding.recyclerView.layoutManager as LinearLayoutManager,
+            1
+        ) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int) {
+                getData(page)
             }
+
+            override val isLoading: Boolean
+                get() = isDataLoading
         })
     }
 
@@ -144,8 +143,8 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
     }
 
     private fun notifyAdapter(newItems: List<Movie>) {
+        isDataLoading = false
         if (newItems.isNotEmpty()) {
-            currentPage++
             items.addAll(newItems)
             adapter.notifyDataSetChanged()
         }
@@ -179,14 +178,15 @@ class MoviesFragment : BaseFragment<FragmentMoviesBinding>() {
         binding.recyclerView.hide()
         binding.progressBar.show()
         binding.textView.hide()
-        currentPage = 1
+        isDataLoading = false
         items.clear()
         adultMenuFilter?.isChecked = false
     }
 
-    private fun getData() {
+    private fun getData(page: Int) {
+        isDataLoading = true
         viewModel.getPopularMovies(
-            currentPage,
+            page,
             Utils.isNetworkAvailable(requireContext()),
             adultMenuFilter?.isChecked ?: false
         )
